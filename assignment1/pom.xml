@@ -8,6 +8,10 @@
     <artifactId>assignment1</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <exec.mainClass>bd.edu.seu.fall2018ai.assignment1.Main</exec.mainClass>
+    </properties>
+
     <build>
         <plugins>
             <!-- Maven Compiler Plugin -->
@@ -50,7 +54,7 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
+         </plugins>
     </build>
 
     <dependencies>
