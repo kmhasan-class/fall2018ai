@@ -21,7 +21,7 @@
       <Label fx:id="statusLabel" maxWidth="1.7976931348623157E308" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
       <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="1">
         <items>
-          <Button fx:id="button" mnemonicParsing="false" onAction="#handleButtonClick" text="Button" />
+          <Button fx:id="button" mnemonicParsing="true" onAction="#handleButtonClick" text="Read Map" />
         </items>
       </ToolBar>
    </children>

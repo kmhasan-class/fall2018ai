@@ -1,7 +1,9 @@
 bd/edu/seu/fall2018ai/assignment1/model/Point2D.class
-bd/edu/seu/fall2018ai/assignment1/model/Rectangle.class
-bd/edu/seu/fall2018ai/assignment1/model/Circle.class
+bd/edu/seu/fall2018ai/assignment1/model/Circle2D.class
+bd/edu/seu/fall2018ai/assignment1/model/Destination2D.class
+bd/edu/seu/fall2018ai/assignment1/model/Robot2D.class
+bd/edu/seu/fall2018ai/assignment1/model/Shape2D.class
 bd/edu/seu/fall2018ai/assignment1/controller/MainUiController.class
-bd/edu/seu/fall2018ai/assignment1/model/Shape.class
 bd/edu/seu/fall2018ai/assignment1/model/Constants.class
+bd/edu/seu/fall2018ai/assignment1/model/Rectangle2D.class
 bd/edu/seu/fall2018ai/assignment1/Main.class
