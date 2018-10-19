@@ -5,27 +5,23 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.shape.Rectangle?>
 
-
-<GridPane alignment="center" hgap="10" vgap="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.171" fx:controller="bd.edu.seu.fall2018ai.assignment1.controller.MainUiController">
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bd.edu.seu.fall2018ai.assignment1.controller.MainUiController">
    <children>
       <ScrollPane fx:id="scrollPane" prefHeight="800.0" prefWidth="800.0">
          <content>
             <Pane fx:id="drawingPane" prefHeight="800.0" prefWidth="800.0">
-               <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="200.0" layoutX="116.0" layoutY="64.0" stroke="BLACK" strokeType="INSIDE" width="200.0" />
-               </children>
             </Pane>
          </content>
       </ScrollPane>
       <Label fx:id="statusLabel" maxWidth="1.7976931348623157E308" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
       <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="1">
         <items>
-          <Button fx:id="button" mnemonicParsing="false" text="Button" />
+          <Button fx:id="button" mnemonicParsing="true" onAction="#handleButtonClick" text="Read Map" />
         </items>
       </ToolBar>
    </children>
@@ -37,4 +33,7 @@
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
 </GridPane>
