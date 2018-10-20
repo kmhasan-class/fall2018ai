@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class RandomSearchAlgorithm extends SearchAlgorithm {
+public class AnotherRandomSearchAlgorithm extends SearchAlgorithm {
     @Override
     public List<Action> search(Robot2D source,
                                Destination2D destination,
@@ -17,12 +17,12 @@ public class RandomSearchAlgorithm extends SearchAlgorithm {
                                double mapWidth, double mapHeight) {
         List<Action> actionList = new ArrayList<>();
 
-        final int MAX_ACTIONS = 100000;
+        final int MAX_ACTIONS = 100;
         Random random = new Random();
 
         for (int i = 0; i < MAX_ACTIONS; i++) {
             Robot2D currentState = new Robot2D(source.getCenter(), source.getRadius(), source.getOrientation());
-            Action randomAction = Action.values()[random.nextInt(Action.values().length)];
+            Action randomAction = Action.values()[random.nextInt(Action.values().length - 1)];
             source.applyAction(randomAction);
 
             boolean collides = false;

@@ -2,21 +2,39 @@ package bd.edu.seu.fall2018ai.assignment1.model;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString(of = {"center", "radius"})
 public class Circle2D extends Shape2D {
-    private Point2D center;
-    private double radius;
-    private Circle circle;
+    protected Point2D center;
+    protected double radius;
+
+    private final Circle circle;
+    private final Group group;
+    private final Circle centerCircle;
+
+    private boolean centerDrawable;
+
+
 
     public Circle2D(Point2D center, double radius) {
         this.center = center;
         this.radius = radius;
+        centerDrawable = false;
         circle = new Circle(center.getX(), center.getY(), radius, new Color(0.8, 0, 0, 0.7));
+        group = new Group();
+        centerCircle = new Circle(center.getX(), center.getY(), radius / 10);
+        group.getChildren().add(circle);
+    }
+
+    public void setFill(Paint paint) {
+        circle.setFill(paint);
     }
 
     @Override
@@ -35,14 +53,14 @@ public class Circle2D extends Shape2D {
 
             double closestX = clamp(
                     circle2D.center.getX(),
-                    rectangle2D.getCenter().getX() - rectangle2D.getHeight() / 2,
-                    rectangle2D.getCenter().getX() + rectangle2D.getHeight() / 2
+                    rectangle2D.getCenter().getX() - rectangle2D.getWidth() / 2,
+                    rectangle2D.getCenter().getX() + rectangle2D.getWidth() / 2
             );
 
             double closestY = clamp(
                     circle2D.center.getY(),
-                    rectangle2D.getCenter().getY() - rectangle2D.getWidth() / 2,
-                    rectangle2D.getCenter().getY() + rectangle2D.getWidth() / 2
+                    rectangle2D.getCenter().getY() - rectangle2D.getHeight() / 2,
+                    rectangle2D.getCenter().getY() + rectangle2D.getHeight() / 2
             );
 
             double distanceX = circle2D.center.getX() - closestX;
@@ -57,8 +75,12 @@ public class Circle2D extends Shape2D {
 
     @Override
     public Group getJFXShape() {
-        Group group = new Group();
-        group.getChildren().add(circle);
+        circle.setCenterX(center.getX());
+        circle.setCenterY(center.getY());
+        centerCircle.setCenterX(center.getX());
+        centerCircle.setCenterY(center.getY());
+        if (centerDrawable && !group.getChildren().contains(centerCircle))
+            group.getChildren().add(centerCircle);
         return group;
     }
 }

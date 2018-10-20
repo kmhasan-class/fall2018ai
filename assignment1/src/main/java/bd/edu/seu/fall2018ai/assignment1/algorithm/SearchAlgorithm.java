@@ -10,5 +10,6 @@ import java.util.List;
 public abstract class SearchAlgorithm {
     public abstract List<Action> search(Robot2D source,
                                         Destination2D destination,
-                                        List<Shape2D> obstacleList);
+                                        List<Shape2D> obstacleList,
+                                        double mapWidth, double mapHeight);
 }

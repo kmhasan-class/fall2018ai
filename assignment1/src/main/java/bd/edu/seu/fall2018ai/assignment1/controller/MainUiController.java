@@ -1,39 +1,77 @@
 package bd.edu.seu.fall2018ai.assignment1.controller;
 
+import bd.edu.seu.fall2018ai.assignment1.algorithm.RandomSearchAlgorithm;
+import bd.edu.seu.fall2018ai.assignment1.algorithm.SearchAlgorithm;
 import bd.edu.seu.fall2018ai.assignment1.model.*;
+import bd.edu.seu.fall2018ai.assignment1.util.SubclassLoader;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Translate;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class MainUiController implements Initializable {
+    private class State {
+        int iteration;
+        double x;
+        double y;
+        double theta;
+        String action;
+
+        public State(int iteration, double x, double y, double theta, String action) {
+            this.iteration = iteration;
+            this.x = x;
+            this.y = y;
+            this.theta = theta;
+            this.action = action;
+        }
+    }
+
     @FXML private Label statusLabel;
     @FXML private Pane drawingPane;
     @FXML private ScrollPane scrollPane;
+    @FXML private Button readMapButton;
+    @FXML private Button searchButton;
+    @FXML private TableView<State> stateTableView;
+    @FXML private TableColumn<State, String> actionColumn;
+    @FXML private TableColumn<State, String> iterationColumn;
+    @FXML private TableColumn<State, String> xColumn;
+    @FXML private TableColumn<State, String> yColumn;
+    @FXML private TableColumn<State, String> thetaColumn;
+    @FXML private ComboBox<Class> searchClassComboBox;
+
+    private final ObservableList<State> stateTableList = FXCollections.observableArrayList();
+    private final ObservableList<Class> searchClassList = FXCollections.observableArrayList();
 
     private List<Shape2D> shape2DList;
     private double mapWidth = 800;
     private double mapHeight = 800;
     private Robot2D source;
     private Destination2D destination;
+    private SearchAlgorithm searchAlgorithm;
 
     private final double MAJOR_TICK = 100;
     private final double MINOR_TICK = 20;
@@ -159,7 +197,7 @@ public class MainUiController implements Initializable {
     }
 
     @FXML
-    public void handleButtonClick(ActionEvent event) {
+    public void handleReadMapAction(ActionEvent event) {
         statusLabel.setText("Reading map");
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(null);
@@ -171,12 +209,78 @@ public class MainUiController implements Initializable {
                 statusLabel.setText("Done reading " + file.getName());
             });
         }
+        searchButton.setDisable(false);
+    }
+
+    int iterationCount;
+    @FXML
+    public void handleSearchAction(ActionEvent event) {
+        iterationCount = 0;
+
+        Robot2D initialState = new Robot2D(source.getCenter(), source.getRadius(), source.getOrientation());
+
+        List<Action> actionList = searchAlgorithm.search(source, destination, shape2DList, mapWidth, mapHeight);
+        stateTableList.clear();
+        drawingPane.getChildren().remove(source.getJFXShape());
+
+        Iterator<Action> iterator = actionList.iterator();
+        Timeline timeline = new Timeline();
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(10), keyEvent -> {
+            drawingPane.getChildren().remove(initialState.getJFXShape());
+            Action action = iterator.next();
+            stateTableList.add(new State(++iterationCount, initialState.getCenter().getX(), initialState.getCenter().getY(), initialState.getOrientation(), action.toString()));
+            Point2D lastPoint = new Point2D(initialState.getCenter().getX(), initialState.getCenter().getY());
+            initialState.applyAction(action);
+            drawingPane.getChildren().add(initialState.getJFXShape());
+            Point2D newPoint = new Point2D(initialState.getCenter().getX(), initialState.getCenter().getY());
+            Platform.runLater(() -> {
+                stateTableView.requestFocus();
+                stateTableView.getSelectionModel().select(stateTableList.size() - 1);
+                stateTableView.getFocusModel().focus(stateTableList.size() - 1);
+                drawingPane.getChildren().add(new Line(lastPoint.getX(), lastPoint.getY(), newPoint.getX(), newPoint.getY()));
+            });
+
+        });
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.setCycleCount(actionList.size());
+        timeline.playFromStart();
+    }
+
+    @FXML
+    public void handleClassSelectionAction(ActionEvent actionEvent) {
+        try {
+            searchAlgorithm = (SearchAlgorithm) searchClassComboBox.getSelectionModel().getSelectedItem().newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         scrollPane.setStyle("-fx-focus-color: transparent;");
         statusLabel.setText("Started the application");
+        stateTableView.setItems(stateTableList);
+        iterationColumn.setCellValueFactory(data -> Bindings.format("%5.0f", new SimpleDoubleProperty(data.getValue().iteration)));
+        xColumn.setCellValueFactory(data -> Bindings.format("%7.2f", new SimpleDoubleProperty(data.getValue().x)));
+        yColumn.setCellValueFactory(data -> Bindings.format("%7.2f", new SimpleDoubleProperty(data.getValue().y)));
+        thetaColumn.setCellValueFactory(data -> Bindings.format("%5.2f", new SimpleDoubleProperty(Math.toDegrees(data.getValue().theta))));
+        actionColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().action));
+
         Platform.runLater(() -> drawGrid());
+
+        searchAlgorithm = new RandomSearchAlgorithm();
+        searchClassComboBox.setItems(searchClassList);
+
+        try {
+            Arrays.stream(SubclassLoader.getClasses("bd.edu.seu.fall2018ai.assignment1.algorithm"))
+                    .filter(aClass -> !aClass.getName().equals("bd.edu.seu.fall2018ai.assignment1.algorithm.SearchAlgorithm"))
+                    .forEach(aClass -> searchClassList.add(aClass));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

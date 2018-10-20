@@ -6,20 +6,26 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString(of = {"center", "width", "height"})
 public class Rectangle2D extends Shape2D {
-    private Point2D center;
-    private double width;
-    private double height;
-    private Rectangle rectangle;
+    protected Point2D center;
+    protected double width;
+    protected double height;
+
+    private final Rectangle rectangle;
+    private final Group group;
 
     public Rectangle2D(Point2D center, double width, double height) {
         this.center = center;
         this.width = width;
         this.height = height;
+        group = new Group();
         rectangle = new Rectangle(center.getX() - width / 2, center.getY() - height / 2, width, height);
         rectangle.setFill(new Color(0.8, 0, 0, 0.7));
+        group.getChildren().add(rectangle);
     }
 
     @Override
@@ -30,14 +36,14 @@ public class Rectangle2D extends Shape2D {
 
             double closestX = clamp(
                     circle2D.getCenter().getX(),
-                    rectangle2D.getCenter().getX() - rectangle2D.getHeight() / 2,
-                    rectangle2D.getCenter().getX() + rectangle2D.getHeight() / 2
+                    rectangle2D.getCenter().getX() - rectangle2D.getWidth() / 2,
+                    rectangle2D.getCenter().getX() + rectangle2D.getWidth() / 2
             );
 
             double closestY = clamp(
                     circle2D.getCenter().getY(),
-                    rectangle2D.getCenter().getY() - rectangle2D.getWidth() / 2,
-                    rectangle2D.getCenter().getY() + rectangle2D.getWidth() / 2
+                    rectangle2D.getCenter().getY() - rectangle2D.getHeight() / 2,
+                    rectangle2D.getCenter().getY() + rectangle2D.getHeight() / 2
             );
 
             double distanceX = circle2D.getCenter().getX() - closestX;
@@ -52,8 +58,8 @@ public class Rectangle2D extends Shape2D {
 
     @Override
     public Group getJFXShape() {
-        Group group = new Group();
-        group.getChildren().add(rectangle);
+        rectangle.setX(center.getX() - width / 2);
+        rectangle.setY(center.getY() - height / 2);
         return group;
     }
 }
