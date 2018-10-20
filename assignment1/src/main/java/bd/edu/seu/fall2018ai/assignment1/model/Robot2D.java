@@ -28,7 +28,7 @@ public class Robot2D extends Circle2D {
         double innerRadius = 0.75 * super.getRadius();
         double outerRadius = 1.0 * super.getRadius();
         Polygon headingHand = new Polygon();
-        headingHand.getPoints().addAll(new Double[]{
+        headingHand.getPoints().addAll(new Double[] {
                 super.getCenter().getX(), super.getCenter().getY(),
                 innerRadius * Math.cos(orientation - Math.PI / 8) + super.getCenter().getX(), innerRadius * Math.sin(orientation - Math.PI / 8) + super.getCenter().getY(),
                 outerRadius * Math.cos(orientation) + super.getCenter().getX(), outerRadius * Math.sin(orientation) + super.getCenter().getY(),
