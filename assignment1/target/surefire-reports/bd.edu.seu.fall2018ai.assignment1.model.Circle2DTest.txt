@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: bd.edu.seu.fall2018ai.assignment1.model.Circle2DTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.228 sec
