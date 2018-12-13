@@ -1,7 +1,26 @@
 from sklearn import tree
 
-features = [[89], [81], [73], [76]]
-labels = ["A+", "A+", "A-", "A"]
+data = []
+
+with open("grades.csv", "r") as input:
+    lineNumber = 0
+    for line in input:
+        if lineNumber != 0:
+            tokens = line.split(",")
+            data.append(tokens)
+        lineNumber += 1
+print("Read", lineNumber, "lines")
+
+labels = []
+features = []
+for row in data:
+    label = row[1]
+    labels.append(label)
+    
+    featureVector = []
+    feature = float(row[0])
+    featureVector.append(feature)
+    features.append(featureVector)
 
 print("Features", features)
 print("Labels", labels)
